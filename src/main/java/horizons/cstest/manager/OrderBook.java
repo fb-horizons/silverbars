@@ -4,18 +4,13 @@ import horizons.cstest.model.AggregatedOrder;
 import horizons.cstest.model.Order;
 import horizons.cstest.model.OrderSide;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Comparator;
-import java.util.Collections;
+import java.util.*;
 
 import static horizons.cstest.model.OrderSide.BUY;
 import static horizons.cstest.model.OrderSide.SELL;
 
 public class OrderBook {
-    private final List<Order> orders = new ArrayList<>();
+    private final List<Order> orders = new LinkedList<>();
     /*
      Based on assumption there is more frequent request for a view of order book than order book manipulation(add/remove),
      updated maps of sell and buy aggregated orders are maintained.
@@ -155,6 +150,26 @@ public class OrderBook {
         System.out.println("Removed " + buyOrder1);
         printOrderBookStatus(orderBook);
 
+        final long startTime = System.nanoTime();
+        for (int i = 0; i< 1000000; i++){
+            orderBook.addOrder(sellOrder1);
+            orderBook.addOrder(sellOrder2);
+            orderBook.addOrder(sellOrder3);
+            orderBook.addOrder(sellOrder4);
+            orderBook.addOrder(buyOrder1);
+            orderBook.addOrder(buyOrder2);
+            orderBook.addOrder(buyOrder3);
+            orderBook.addOrder(buyOrder4);
+        }
+        printOrderBookStatus(orderBook);
+        for (int i = 0; i< 10000; i++){
+            orderBook.cancelOrder(sellOrder1);
+            orderBook.cancelOrder(buyOrder1);
+            orderBook.cancelOrder(buyOrder2);
+            orderBook.cancelOrder(buyOrder3);
+        }
+        printOrderBookStatus(orderBook);
+        System.out.printf(System.nanoTime() - startTime + "");
     }
 
     private static void printOrderBookStatus(OrderBook orderBook){
